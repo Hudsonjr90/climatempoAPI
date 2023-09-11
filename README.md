@@ -1,8 +1,3 @@
-# clima tempo
+## Clima Tempo API
 
-
-Aplicação Javascript simples, para pesquisar sobre o clima e tempo das cidades de todo o mundo através da API openweather.
-
-
- 
-<img src="./assets/clima.png">
+<h1>App Criado com HTML, CSS e Javascript, consumindo a WeatherAPI, para mostrar as informações de cada cidade. </h1>

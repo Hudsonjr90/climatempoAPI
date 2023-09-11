@@ -1,36 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="assets/Oxygen-Icons.org-Oxygen-Status-weather-clouds.ico" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
-    <title>ClimaTempo</title>
+  <meta charset="UTF-8">
+  <title>Weather App using JS</title>
+  <link rel='stylesheet' href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css'><link rel="stylesheet" href="./style.css">
+
 </head>
 <body>
-    <div class="container">
-        <!-- pesquisar a cidade -->
-        <header>
-            <input id="cidadeInput" type="text" autocomplete="off" placeholder="pesquisar cidade">
-            <button id="cidadeBtn" class="btnDia">ver</button>
-        </header>
-
-        <!-- informações da cidade -->
-        <main>
-            <!-- nome da cidade e data da previsão -->
-            <section class="localizacao">
-                <div class="cidade">Escolha uma cidade</div>
-                <div class="data"></div>
-            </section>
-            <!-- temperatura, clima, mínima e máxima temperatura -->
-            <div class="climaInfo">
-                <h1 class="temperatura">0°</h1>
-                <div class="clima">Escolha uma cidade</div>
-                <p class="min-max">0°/0°</p>
-            </div>
-        </main>
+<!-- partial:index.partial.html -->
+<div class="wrapper">
+  <header><i class='bx bx-left-arrow-alt'></i>App Clima</header>
+  <section class="input-part">
+    <p class="info-txt"></p>
+    <div class="content">
+      <input type="text" spellcheck="false" placeholder="Coloque o nome da Cidade" required>
+      <div class="separator"></div>
+      <button>Use sua localização</button>
+    </div>
+  </section>
+  <section class="weather-part">
+    <img src="" alt="Weather Icon">
+    <div class="temp">
+      <span class="numb">_</span>
+      <span class="deg">°</span>C
+    </div>
+    <div class="weather">_ _</div>
+    <div class="location">
+      <i class='bx bx-map'></i>
+      <span>_, _</span>
+    </div>
+    <div class="bottom-details">
+      <div class="column feels">
+        <i class='bx bxs-thermometer'></i>
+        <div class="details">
+          <div class="temp">
+            <span class="numb-2">_</span>
+            <span class="deg">°</span>C
+          </div>
+          <p>Temperatura</p>
         </div>
-    <script src="script.js"></script>
+      </div>
+      <div class="column humidity">
+        <i class='bx bxs-droplet-half'></i>
+        <div class="details">
+          <span>_</span>
+          <p>Umidade</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
 </body>
 </html>
