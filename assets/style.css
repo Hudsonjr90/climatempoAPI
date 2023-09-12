@@ -24,8 +24,8 @@ body {
 }
 
 .wrapper {
-  min-width: 100vh;
-  min-height: 50vh;
+  min-width: 80vh;
+  min-height: 42vh;
   background: #1f1f1f;
   border-radius: 7px;
   border: 1px solid #fff;
