@@ -1,103 +1,112 @@
-const wrapper = document.querySelector(".wrapper"),
-  inputPart = document.querySelector(".input-part"),
-  infoTxt = inputPart.querySelector(".info-txt"),
-  inputField = inputPart.querySelector("input"),
-  locationBtn = inputPart.querySelector("button"),
-  weatherPart = wrapper.querySelector(".weather-part"),
-  wIcon = weatherPart.querySelector("img"),
-  arrowBack = wrapper.querySelector("header i");
 
-const apiKey = "383780b96a6afc813c84d99d6d5d47b8"; // Replace with your actual API key
-let api;
 
-inputField.addEventListener("keyup", (e) => {
-  if (e.key == "Enter" && inputField.value != "") {
-    requestApi(inputField.value);
-  }
-});
+//Variáveis e seleção de elementos
 
-locationBtn.addEventListener("click", () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(onSuccess, onError);
-  } else {
-    alert("Your browser not support geolocation api");
-  }
-});
+const apiKey = "383780b96a6afc813c84d99d6d5d47b8";
+const apiCountryURL = "https://countryflagsapi.com/png/";
+const apiUnsplash = "https://source.unsplash.com/1600x1900/?";
 
-function requestApi(city) {
-  api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
-  fetchData();
+const cityInput = document.querySelector('#city-input');
+const searchBtn = document.querySelector('#search');
+
+const cityElement = document.querySelector('#city');
+const tempElement = document.querySelector('#temperature span');
+const descElement = document.querySelector('#description');
+const weatherIconElement = document.querySelector('#weather-icon');
+const humidityElement = document.querySelector('#umidity span');
+const windElement = document.querySelector('#wind span');
+
+const weatherContainer = document.querySelector("#weather-data");
+
+const errorMessageContainer = document.querySelector("#error-message");
+
+const loader = document.querySelector("#loader");
+
+const suggestionsContainer = document.querySelector("#suggestions");
+const suggestionsButtons = document.querySelectorAll("#suggestions button");
+
+
+//funcoes
+
+const togglerLoader = () => {
+    loader.classList.toggle("hide");
 }
 
-function onSuccess(position) {
-  const { latitude, longitude } = position.coords;
-  api = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
-  fetchData();
+const getWeatherData = async(city) => {
+    togglerLoader();
+
+    const apiWeatherURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=pt_br`;
+
+    const res = await fetch(apiWeatherURL);
+    const data = await res.json();
+
+    togglerLoader();
+
+    return data;
+
 }
 
-function onError(error) {
-  infoTxt.innerText = error.message;
-  infoTxt.classList.add("error");
+
+const showErrorMessage = () => {
+    errorMessageContainer.classList.remove('hide');
 }
 
-function fetchData() {
-  infoTxt.innerText = "Buscando informações...";
-  infoTxt.classList.add("pending");
-  fetch(api)
-    .then((res) => res.json())
-    .then((result) => weatherDetails(result))
-    .catch(() => {
-      infoTxt.innerText = "Something went wrong, API Error";
-      infoTxt.classList.replace("pending", "error");
-    });
+const hideInformation = () => {
+    errorMessageContainer.classList.add('hide');
+    weatherContainer.classList.add('hide');
+
+    suggestionsContainer.classList.add('hide');
 }
 
-function weatherDetails(info) {
-  if (info.cod == "404") {
-    infoTxt.classList.replace("pending", "error");
-    infoTxt.innerText = `${inputField.value} isn't a valid city name`;
-  } else {
-    const city = info.name;
-    const country = info.sys.country;
-    const { description, id } = info.weather[0];
-    const { temp, feels_like, humidity } = info.main;
+const showWeatherData = async(city) => {
+    hideInformation();
 
-    if (id == 800) {
-      wIcon.src =
-        "https://drive.google.com/uc?export=view&id=13TlzPFrICsSEB3llo6PWuywWpoL6ywxb";
-    } else if (id >= 200 && id <= 232) {
-      wIcon.src =
-        "https://drive.google.com/uc?export=view&id=13eqt-OgtVphxXYpIHd9Q7QOBNocK0Onq";
-    } else if (id >= 600 && id <= 622) {
-      wIcon.src =
-        "https://drive.google.com/uc?export=view&id=13Z9FbAC1FJ-ptr55vUWUufLBCrhgjbF1";
-    } else if (id >= 701 && id <= 781) {
-      wIcon.src =
-        "https://drive.google.com/uc?export=view&id=13YVPMlryJ3168jk-VR_zfTvVBL6Xeaqs";
-    } else if (id >= 801 && id <= 804) {
-      wIcon.src =
-        "https://drive.google.com/uc?export=view&id=13TVP9iuZz8A9cf3OtJCgTmeS9AtJ-B3R";
-    } else if ((id >= 500 && id <= 531) || (id >= 300 && id <= 321)) {
-      wIcon.src =
-        "https://drive.google.com/uc?export=view&id=13YoLrgIqfw6UHTu0x4yqTRLIyCbT1O6e";
+    const data = await getWeatherData(city);
+
+    if(data.cod === "404"){
+        showErrorMessage();
+        return;
     }
 
-    weatherPart.querySelector(".temp .numb").innerText = Math.floor(temp);
-    weatherPart.querySelector(".weather").innerText = description;
-    weatherPart.querySelector(
-      ".location span"
-    ).innerText = `${city}, ${country}`;
-    weatherPart.querySelector(".temp .numb-2").innerText = Math.floor(
-      feels_like
-    );
-    weatherPart.querySelector(".humidity span").innerText = `${humidity}%`;
-    infoTxt.classList.remove("pending", "error");
-    infoTxt.innerText = "";
-    inputField.value = "";
-    wrapper.classList.add("active");
-  }
-}
+    cityElement.innerText = data.name;
+    tempElement.innerText = parseInt(data.main.temp);
+    descElement.innerText = data.weather[0].description;
+    weatherIconElement.setAttribute("src", `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`);
+    humidityElement.innerText = `${data.main.humidity}%`;
+    windElement.innerText = `${data.wind.speed}km/h`;
 
-arrowBack.addEventListener("click", () => {
-  wrapper.classList.remove("active");
+    //mudar img de background
+
+    document.body.style.backgroundImage = `url("${apiUnsplash + city}")`
+
+    weatherContainer.classList.remove('hide');
+};
+
+//eventos
+searchBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const city = cityInput.value;
+
+    showWeatherData(city);
+
 });
+
+    //Para enviar no enter
+
+cityInput.addEventListener("keyup", (e) => { 
+    if(e.code === "Enter") {
+        const city = e.target.value;
+
+        showWeatherData(city);
+    }
+});
+
+suggestionsButtons.forEach((btn) => {
+
+    btn.addEventListener("click", () => {
+
+        const city = btn.getAttribute("id");
+        showWeatherData(city);
+    })
+})
